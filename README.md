@@ -1,5 +1,7 @@
 # Setlist
 
+Destined for greatness, this app will be a way to manage the setlists for the greatest cover band of all time, Goldilox (@goldiloxtheband).
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.6.
 
 ## Development server
