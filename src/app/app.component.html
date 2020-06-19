@@ -1,11 +1,7 @@
-<ul>
-  <li class="text" *ngFor="let item of (items | async); index as i; first as isFirst; last as isLast">
-    <ng-container *ngIf="i===0">
-      {{item | json}}
-    <br>
-    </ng-container>
-    {{item.song}} - {{item.artist}} - {{item.length}}
-    
-  </li>
-
+<ul *ngIf="songs && songs?.length > 0">
+  <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+    <li cdkDrag class="text example-box" *ngFor="let song of songs">
+        {{song.song}} - {{song.artist}} - {{songLengthConversionDisplay(song.duration)}}
+      </li>
+  </div>
 </ul>

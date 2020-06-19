@@ -1,19 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'setlist';
   items: Observable<any[]>;
+  songs: any[];
 
   constructor(firestore: AngularFirestore) {
     this.items = firestore.collection('songs').valueChanges();
-  
+
+  }
+
+  ngOnInit() {
+    this.items.subscribe(items => {
+      this.songs = items;
+    });
+  }
+
+  songLengthConversionDisplay(duration: string) {
+    let ms = parseInt(duration);
+    let seconds = Math.floor((ms / 1000) % 60);
+    let minutes = Math.floor((ms / (1000 * 60)) % 60);
+    //let hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+    //let hoursDisplay = (hours < 10) ? "0" + hours : hours;
+    //let minutesDisplay = (minutes < 10) ? "0" + minutes : minutes;
+    let secondsDisplay = (seconds < 10) ? "0" + seconds : seconds;
+
+    return minutes + ":" + secondsDisplay;
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    moveItemInArray(this.songs, event.previousIndex, event.currentIndex);
   }
 }
 
