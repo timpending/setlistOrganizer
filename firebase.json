@@ -1,0 +1,19 @@
+{
+  "hosting": [
+    {
+      "target": "setlist",
+      "public": "dist/setlist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

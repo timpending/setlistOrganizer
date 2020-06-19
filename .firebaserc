@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ng-tea-shop": {
+      "hosting": {
+        "setlist": [
+          "ng-tea-shop"
+        ]
+      }
+    }
+  }
+}
