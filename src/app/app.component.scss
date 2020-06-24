@@ -1,3 +1,15 @@
+.button-container {
+    padding-left: 40px;
+    padding-top: 20px;
+}
+
+.button {
+    margin-right: 16px;
+    &::last-of-type {
+        margin-right: 0;
+    }
+}
+
 .example-list {
   width: 500px;
   max-width: 100%;

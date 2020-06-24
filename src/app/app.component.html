@@ -1,7 +1,12 @@
-<ul *ngIf="songs && songs?.length > 0">
-  <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-    <li cdkDrag class="text example-box" *ngFor="let song of songs">
-        {{song.song}} - {{song.artist}} - {{songLengthConversionDisplay(song.duration)}}
+<header class="button-container">
+  <button mat-flat-button class="button" color="accent" (click)="logCollection()">Log Collection</button>
+</header>
+<main>
+  <ul *ngIf="songs && songs?.length > 0">
+    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+      <li cdkDrag class="text example-box" *ngFor="let song of songs">
+        {{ song.order+1}}. {{song.song}} - {{song.artist}} - {{songLengthConversionDisplay(song.duration)}}
       </li>
-  </div>
-</ul>
+    </div>
+  </ul>
+</main>

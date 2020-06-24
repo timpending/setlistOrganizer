@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +11,29 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 })
 export class AppComponent implements OnInit {
   title = 'setlist';
+  collection: any;
   items: Observable<any[]>;
   songs: any[];
 
-  constructor(firestore: AngularFirestore) {
+  constructor(private firestore: AngularFirestore) {
     this.items = firestore.collection('songs').valueChanges();
-
   }
 
   ngOnInit() {
     this.items.subscribe(items => {
-      this.songs = items;
+      this.songs = _.sortBy(items, ['order']);
     });
+  }
+
+  logCollection() {
+    console.log(this.firestore.collection('songs').snapshotChanges())
+  }
+
+
+  updateOrder() {
+    this.songs.forEach((song, i) => {
+      this.firestore.collection("songs").doc(song.song).set({ order: i}, {merge: true});
+    })
   }
 
   songLengthConversionDisplay(duration: string) {
@@ -39,6 +51,7 @@ export class AppComponent implements OnInit {
 
   drop(event: CdkDragDrop<any[]>) {
     moveItemInArray(this.songs, event.previousIndex, event.currentIndex);
+    this.updateOrder();
   }
 }
 
