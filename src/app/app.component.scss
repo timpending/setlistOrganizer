@@ -1,3 +1,23 @@
+body {
+  background-color: lightslategray;
+}
+
+.container {  
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px; 
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.active-container {
+
+}
+
+.inactive-container {
+
+}
+
 .button-container {
     padding-left: 40px;
     padding-top: 20px;

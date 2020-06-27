@@ -13,17 +13,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { environment } from '../environments/environment';
 
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDmiTpkVDqE-h90wliYkoG9oJtOLu4S-Rw",
-  authDomain: "ng-tea-shop.firebaseapp.com",
-  databaseURL: "https://ng-tea-shop.firebaseio.com",
-  projectId: "ng-tea-shop",
-  storageBucket: "ng-tea-shop.appspot.com",
-  messagingSenderId: "295192380434",
-  appId: "1:295192380434:web:60643d3c7b9a21ca9c44cb"
-};
-
 @NgModule({
   declarations: [
     AppComponent,
