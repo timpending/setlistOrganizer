@@ -7,15 +7,17 @@ body {
   padding-left: 40px;
   padding-right: 40px; 
   display: flex;
-  justify-content: space-evenly;
+  justify-content: start;
 }
 
-.active-container {
-
+#out-list {
+  display: block;
+  position: fixed;
+  top: 70px;
 }
 
 .inactive-container {
-
+  position: fixed; 
 }
 
 .button-container {

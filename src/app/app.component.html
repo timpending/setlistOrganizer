@@ -1,28 +1,89 @@
 <div id="bg">
   <header class="button-container">
-    <button mat-flat-button class="button" color="accent" (click)="logCollection()">Log Collection</button>
-    
-    <button mat-flat-button class="button" color="accent" (click)="setActive()">Utility</button>
-  
+    <button
+      mat-flat-button
+      class="button"
+      color="accent"
+      (click)="logCollection()"
+    >
+      Log Collection
+    </button>
+    <button mat-flat-button class="button" color="primary" (click)="utility()">
+      Utility
+    </button>
+    <button
+      mat-flat-button
+      class="button"
+      color="accent"
+      (click)="toggleShowInactives()"
+    >
+      Show Inactives
+    </button>
   </header>
   <main class="container" cdkDropListGroup>
-    <div class="active-container">
-    <ul *ngIf="songs && songs?.length > 0">
-      <div cdkDropList #actives="cdkDropList" class="example-list" (cdkDropListDropped)="drop($event)">
-        <li cdkDrag class="text example-box" *ngFor="let song of actives$ | async">
-          {{ song.order+1}}. {{song.song}} - {{song.artist}} - {{songLengthConversionDisplay(song.duration)}}
-        </li>
-      </div>
-    </ul>
-  </div>
-  <div class="inactive-container">
-    <ul *ngIf="songs && songs?.length > 0">
-      <div cdkDropList #inactives="cdkDropList" class="example-list" (cdkDropListDropped)="drop($event)">
-        <li cdkDrag class="text example-box" *ngFor="let song of inActives$ | async">
-          {{ song.order+1}}. {{song.song}} - {{song.artist}} - {{songLengthConversionDisplay(song.duration)}}
-        </li>
-      </div>
-    </ul>
-  </div>
+    <div class="inside-setlist-container">
+      <ul *ngIf="songs && songs?.length > 0">
+        <div
+          cdkDropList
+          id="in-list"
+          [cdkDropListData]="inSet"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <li
+            cdkDrag
+            id="{{ song.song }}"
+            class="text example-box"
+            *ngFor="let song of inSet$ | async"
+          >
+            {{ song.order+1 }}. {{ song.song }} - {{ song.artist }} -
+            {{ songLengthConversionDisplay(song.duration) }}
+          </li>
+        </div>
+      </ul>
+    </div>
+
+    <div class="outside-setlist-container">
+      <ul *ngIf="songs && songs?.length > 0">
+        <div
+          cdkDropList
+          id="out-list"
+          [cdkDropListData]="outSet"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <li
+            cdkDrag
+            id="song.song"
+            class="text example-box"
+            *ngFor="let song of outsideSet$ | async"
+          >
+            {{ song.song }} - {{ song.artist }} -
+            {{ songLengthConversionDisplay(song.duration) }}
+          </li>
+        </div>
+      </ul>
+    </div>
+
+    <div class="inactive-container" *ngIf="showInactives">
+      <ul *ngIf="songs && songs?.length > 0">
+        <div
+          cdkDropList
+          id="inactive-list"
+          class="example-list"
+          (cdkDropListDropped)="drop($event)"
+        >
+          <li
+            cdkDrag
+            id="song.song"
+            class="text example-box"
+            *ngFor="let song of outsideSet$ | async"
+          >
+            {{ song.song }} - {{ song.artist }} -
+            {{ songLengthConversionDisplay(song.duration) }}
+          </li>
+        </div>
+      </ul>
+    </div>
   </main>
 </div>

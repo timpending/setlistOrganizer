@@ -4,10 +4,11 @@ import {
   AngularFirestoreCollection,
 } from "@angular/fire/firestore";
 import { Observable, of } from "rxjs";
-import { tap } from "rxjs/operators";
+import { tap, single } from "rxjs/operators";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 import * as _ from "lodash";
 import { ServiceService } from "./service.service";
+import { forEach } from 'lodash';
 
 @Component({
   selector: "app-root",
@@ -17,27 +18,35 @@ import { ServiceService } from "./service.service";
 export class AppComponent implements OnInit {
   title = "setlist";
   collection: AngularFirestoreCollection;
-  items: Observable<any[]>;
+  items$: Observable<any[]>;
   songs$: Observable<any[]>;
   songs: any[] = [];
   actives: any[] = [];
-  actives$: Observable<any>;
+  actives$: Observable<any[]>;
   inActives: any[] = [];
-  inActives$: Observable<any>;
+  inActives$: Observable<any[]>;
+  showInactives: boolean = false;
+  inSet: any[] = [];
+  inSet$: Observable<any[]>;
+  outSet: any[] = [];
+  outsideSet$: Observable<any[]>;
 
   constructor(
     private firestore: AngularFirestore,
     private _service: ServiceService
   ) {
-    this.items = firestore.collection("songs").valueChanges();
+    this.items$ = firestore.collection("songs").valueChanges();
     this.collection = firestore.collection("songs");
   }
 
   ngOnInit() {
-    this.items.subscribe((items) => {
+    this.items$.subscribe((items) => {
       this.songs = _.sortBy(items, ["order"]);
-      this.actives$ = of(items.filter(item => item.isActive));
+      this.actives$ =  of(_.sortBy(items.filter(item => item.isActive), ['order']));
       this.inActives$ = of(items.filter(item => !item.isActive));
+      this.inSet$ =  of(_.sortBy(items.filter(item => item.isInSet && item.isActive), ['order']));
+      this.inSet = _.sortBy(items.filter(item => item.isInSet && item.isActive), ['order']);
+      this.outsideSet$ = of(_.sortBy(items.filter(item => !item.isInSet && item.isActive), ['order']));
     });
   }
 
@@ -45,13 +54,28 @@ export class AppComponent implements OnInit {
     console.log(this.songs);
   }
 
-  updateOrder() {
+  updateOrder(song: any, i: number) {
+    this.firestore.collection('songs').doc(song.song).set({order: i}, {merge: true});
+  }
+
+  updateEntireOrder() {
     this.songs.forEach((song, i) => {
       this.firestore
         .collection("songs")
         .doc(song.song)
         .set({ order: i }, { merge: true });
     });
+  }
+
+  utility() {
+    this.songs.forEach((song, i) => {
+      if (song['isActive']) {
+        this.firestore
+        .collection("songs")
+        .doc(song.song)
+        .set({ isInSet: true }, { merge: true });
+    }
+  });
   }
 
   setActive() {
@@ -61,6 +85,35 @@ export class AppComponent implements OnInit {
         .doc(song.song)
         .set({ isActive: true }, { merge: true });
     });
+  }
+
+  redoSetOrder(title: string) {
+    this.inSet$.forEach(setlist => {
+      setlist.forEach((song, i) => {
+        this.updateOrder(song, i)
+      })
+    })
+  };
+
+  setInsideSet(title: string) {
+    this.collection.doc(title).set({
+      isInSet: true,
+      order: 0
+    }, {merge: true});
+  };
+
+  setOutsideSet(title: string) {
+    this.collection.doc(title).set({
+      isInSet: false,
+      order: 0
+    }, {merge: true});
+  };
+
+  setInactive(title: string) {
+    this.collection.doc(title).set({
+      isActive: false,
+      order: 0
+    }, {merge: true});
   }
 
   songLengthConversionDisplay(duration: string) {
@@ -76,10 +129,28 @@ export class AppComponent implements OnInit {
     return minutes + ":" + secondsDisplay;
   }
 
+  toggleShowInactives() {
+    this.showInactives = !this.showInactives;
+  }
+
+
   drop(event: CdkDragDrop<any[]>) {
-    console.log(event);
+    const prevListId = event.previousContainer.id;
+    const listId = event.container.id;
+    const songTitle = event.item.element.nativeElement.id;
+
+    if (prevListId === 'in-list' && listId === 'out-list') {
+      this.setOutsideSet(songTitle);
+    }
+    if (prevListId === 'out-list' && listId === 'in-list') {
+      this.setInsideSet(songTitle);
+      this.redoSetOrder(songTitle);
+    }
+    if (prevListId === 'in-list' && listId === 'in-list') {
+      this.redoSetOrder(songTitle);
+    }
+    
     moveItemInArray(this.songs, event.previousIndex, event.currentIndex);
-    this.updateOrder();
   }
 }
 

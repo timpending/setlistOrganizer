@@ -6,10 +6,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 })
 export class ServiceService {
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor() { }
 
-  getSongs() {
-    return this.firestore.collection('songs').snapshotChanges();
-}
 
 }
